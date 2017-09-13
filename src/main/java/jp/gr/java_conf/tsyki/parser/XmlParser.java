@@ -63,6 +63,12 @@ public class XmlParser {
         }
     }
 
+    private void afterChildVisit( Node xmlNode) {
+        for ( NodeVisitor visitor : visitors) {
+            visitor.afterChildVisit( xmlNode);
+        }
+    }
+
     private void recursiveSearch( Node parentXMLNode) {
         // 空白や改行のゴミは見ない
         if ( parentXMLNode.getNodeType() == Node.TEXT_NODE)
@@ -79,6 +85,7 @@ public class XmlParser {
                     recursiveSearch( childXMLNode);
                 }
             }
+            afterChildVisit( parentXMLNode);
         }
     }
 

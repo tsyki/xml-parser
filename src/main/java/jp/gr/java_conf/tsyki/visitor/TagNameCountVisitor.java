@@ -31,6 +31,11 @@ public class TagNameCountVisitor implements NodeVisitor {
         countMap.put( nodeName, count + 1);
     }
 
+    @Override
+    public void afterChildVisit( Node xmlNode) {
+        // nothind to do
+    }
+
     private String removeNameSpace( String nodeNameWithNameSpace) {
         final String delimiter = ":";
         if ( !nodeNameWithNameSpace.contains( delimiter)) {

@@ -10,4 +10,7 @@ import org.w3c.dom.Node;
 public interface NodeVisitor {
 
     void visit( Node xmlNode);
+
+    /** 該当ノードの子要素を訪問後に呼ばれる */
+    void afterChildVisit( Node xmlNode);
 }
