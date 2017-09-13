@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -44,6 +46,40 @@ public class EdmDuplicateEntityVisitorTest {
         expected.add( new DuplicateInfo( "メインモデル", 1));
         expected.add( new DuplicateInfo( "サブモデル", 3));
         expected.add( new DuplicateInfo( "サブモデル", 4));
+        assertThat( actual, is( equalTo( expected)));
+    }
+
+    @Test
+    public void testLogicalName() throws IOException {
+        XmlParser parser = new XmlParser();
+        EdmDuplicateEntityVisitor visitor = new EdmDuplicateEntityVisitor();
+        parser.addVisitor( visitor);
+        parser.parse( getPath( "EdmDuplicateEntityVisitorTest_dup.edm"));
+
+        Map<Long, String> actual = visitor.getEntityLogicalNameMap();
+        Map<Long, String> expected = new HashMap<>();
+        expected.put( 1L, "エンティティ1");
+        expected.put( 2L, "エンティティ2");
+        expected.put( 3L, "エンティティ3");
+        expected.put( 4L, "エンティティ4");
+        expected.put( 5L, "エンティティ5");
+        assertThat( actual, is( equalTo( expected)));
+    }
+
+    @Test
+    public void testPhysicalName() throws IOException {
+        XmlParser parser = new XmlParser();
+        EdmDuplicateEntityVisitor visitor = new EdmDuplicateEntityVisitor();
+        parser.addVisitor( visitor);
+        parser.parse( getPath( "EdmDuplicateEntityVisitorTest_dup.edm"));
+
+        Map<Long, String> actual = visitor.getEntityPhysicalNameMap();
+        Map<Long, String> expected = new HashMap<>();
+        expected.put( 1L, "entity_1");
+        expected.put( 2L, "entity_2");
+        expected.put( 3L, "entity_3");
+        expected.put( 4L, "entity_4");
+        expected.put( 5L, "entity_5");
         assertThat( actual, is( equalTo( expected)));
     }
 

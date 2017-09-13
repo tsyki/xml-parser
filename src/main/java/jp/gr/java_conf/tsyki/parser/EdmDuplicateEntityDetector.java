@@ -2,7 +2,6 @@ package jp.gr.java_conf.tsyki.parser;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 
 import jp.gr.java_conf.tsyki.visitor.EdmDuplicateEntityVisitor;
 import jp.gr.java_conf.tsyki.visitor.EdmDuplicateEntityVisitor.DuplicateInfo;
@@ -19,26 +18,37 @@ public class EdmDuplicateEntityDetector {
             return;
         }
         EdmDuplicateEntityDetector detector = new EdmDuplicateEntityDetector();
-        Set<DuplicateInfo> dupInfos = detector.detect( args[0]);
-        detector.showDuplicateInfo( dupInfos);
+        EdmDuplicateEntityVisitor visitor = detector.detect( args[0]);
+        detector.showDuplicateInfo( visitor);
     }
 
-    public Set<DuplicateInfo> detect( String path) throws IOException {
+    public EdmDuplicateEntityVisitor detect( String path) throws IOException {
         XmlParser parser = new XmlParser();
         EdmDuplicateEntityVisitor visitor = new EdmDuplicateEntityVisitor();
         parser.addVisitor( visitor);
         parser.parse( path);
-        Set<DuplicateInfo> dupInfos = visitor.getDuplicateInfos();
-        return dupInfos;
+        return visitor;
     }
 
-    public void showDuplicateInfo( Collection<DuplicateInfo> dupInfos) {
+    public void showDuplicateInfo( EdmDuplicateEntityVisitor visitor) {
+        Collection<DuplicateInfo> dupInfos = visitor.getDuplicateInfos();
         if ( dupInfos.isEmpty()) {
             System.out.println( "重複するENTITYタグは存在しませんでした。");
             return;
         }
         for ( DuplicateInfo dupInfo : dupInfos) {
-            System.out.println( "モデル名=" + dupInfo.getModelViewName() + " 重複しているENTITY ID=" + dupInfo.getEntityId());
+            Long entityId = dupInfo.getEntityId();
+            StringBuilder sb = new StringBuilder();
+            sb.append( "モデル名=");
+            sb.append( dupInfo.getModelViewName());
+            sb.append( " 重複しているENTITY");
+            sb.append( " ID=");
+            sb.append( entityId);
+            sb.append( " 論理名=");
+            sb.append( visitor.getEntityLogicalNameMap().get( entityId));
+            sb.append( " 物理名=");
+            sb.append( visitor.getEntityPhysicalNameMap().get( entityId));
+            System.out.println( sb.toString());
         }
     }
 }

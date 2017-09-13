@@ -1,7 +1,9 @@
 package jp.gr.java_conf.tsyki.visitor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.w3c.dom.Node;
@@ -16,6 +18,8 @@ public class EdmDuplicateEntityVisitor implements NodeVisitor {
     private static final String TAG_MODELVIEW = "MODELVIEW";
 
     private static final String ATTR_LOGICAL_NAME = "L-NAME";
+
+    private static final String ATTR_PHYSICAL_NAME = "P-NAME";
 
     private static final String TAG_ENTITY = "ENTITY";
 
@@ -84,6 +88,10 @@ public class EdmDuplicateEntityVisitor implements NodeVisitor {
     /** 発見した重複するEntityタグの情報 */
     private Set<DuplicateInfo> duplicateInfos = new LinkedHashSet<>();
 
+    private Map<Long, String> entityLogicalNameMap = new HashMap<>();
+
+    private Map<Long, String> entityPhysicalNameMap = new HashMap<>();
+
     /** MODELVIEWタグ内を探索しているかどうか */
     private boolean inModelView = false;
 
@@ -104,15 +112,38 @@ public class EdmDuplicateEntityVisitor implements NodeVisitor {
             inModelView = true;
             modelViewName = xmlNode.getAttributes().getNamedItem( ATTR_LOGICAL_NAME).getNodeValue();
         }
-        else if ( inModelView && TAG_ENTITY.equals( nodeName)) {
-            String id = xmlNode.getAttributes().getNamedItem( ATTR_ID).getNodeValue();
-            // 重複している
-            if ( entityIds.contains( id)) {
-                DuplicateInfo info = new DuplicateInfo( modelViewName, Long.valueOf( id));
-                duplicateInfos.add( info);
+        else if ( TAG_ENTITY.equals( nodeName)) {
+            if ( inModelView) {
+                String id = getAttributeValue( xmlNode, ATTR_ID);
+                // 重複している
+                if ( entityIds.contains( id)) {
+                    DuplicateInfo info = new DuplicateInfo( modelViewName, Long.valueOf( id));
+                    duplicateInfos.add( info);
+                }
+                entityIds.add( id);
             }
-            entityIds.add( id);
+            else {
+                String idStr = getAttributeValue( xmlNode, ATTR_ID);
+                if ( idStr == null) {
+                    return;
+                }
+                Long id = Long.valueOf( idStr);
+                String logicalName = getAttributeValue( xmlNode, ATTR_LOGICAL_NAME);
+                // NOTE VIEWタグの下のENTITYタグの場合は論理名などが入っていない
+                if ( logicalName != null) {
+                    entityLogicalNameMap.put( id, logicalName);
+                }
+                String physicalName = getAttributeValue( xmlNode, ATTR_PHYSICAL_NAME);
+                if ( physicalName != null) {
+                    entityPhysicalNameMap.put( id, physicalName);
+                }
+            }
         }
+    }
+
+    private String getAttributeValue( Node node, String attr) {
+        Node attrNode = node.getAttributes().getNamedItem( attr);
+        return attrNode != null ? attrNode.getNodeValue() : null;
     }
 
     @Override
@@ -132,5 +163,13 @@ public class EdmDuplicateEntityVisitor implements NodeVisitor {
 
     public Set<DuplicateInfo> getDuplicateInfos() {
         return duplicateInfos;
+    }
+
+    public Map<Long, String> getEntityLogicalNameMap() {
+        return entityLogicalNameMap;
+    }
+
+    public Map<Long, String> getEntityPhysicalNameMap() {
+        return entityPhysicalNameMap;
     }
 }
