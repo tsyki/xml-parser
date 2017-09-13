@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:VerticalPanel styleName="dialogVPanel" ui:field="verticalPanel">
+		<!-- <や>は実態参照でないといけない -->
+		<g:HTML HTML="&lt;b&gt;Sending name to the server:&lt;/b&gt;" />
+		<g:Label ui:field="textToServerLabel" />
+		<g:HTML HTML="&lt;br/&gt;&lt;b&gt;Server replies:&lt;/b&gt;" />
+		<g:HTML></g:HTML>
+		<g:HTML ui:field="serverResponseLabel" />
+		<!-- NOTE: verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT); に対応 -->
+		<!-- client.uiパッケージにCellというクラスはないが、CellLayoutParserがこのタグの処理をしている -->
+		<g:Cell horizontalAlignment="ALIGN_RIGHT">
+			<g:Button ui:field="closeButton" text="Close" />
+		</g:Cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 
