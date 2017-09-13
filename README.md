@@ -1,16 +1,21 @@
 # xml-parser
 XMLをパースしていろいろするツール
 
+## 
 ## 使い方
 
-1. 添付ファイルのプロジェクトをEclipseにインポート
-2. 実行構成でWidgetCounterの引数に解析したいディレクトリを指定(複数指定可能)し、実行
-3. 指定されたディレクトリ以下のui.xmlで使われている部品名とその出現回数が出力されます
+1. Eclipseで`Check out as Maven project from SCM`を利用してインポートします。
+2. 実行構成から動かしたいクラスの引数にファイルパスを指定して実行させます。
+
+## 実装されている機能
+
+* XMLのタグの出現数計測(WidgetCounter)
+* Object Browser ERで作成したedmファイルから不正に重複しているENTITYタグを検出する(EdmDuplicateEntityDetector)
 
 ## 拡張方法
 
-部品の出現回数カウント以外の処理を行いたい場合は、以下の実装を行う事で実現できます。
-1. NodeVisitorを実装した新しいクラスを作成し、visitメソッドを実装  
+以下の実装を行う事で任意の解析処理を実現できます。
+1. NodeVisitorを実装した新しいクラスを作成し、visit,afterChildVisitメソッドを実装  
 引数に深さ優先探索で訪問されたXMLのノードが渡されてきます
 2. WidgetCounter#mainと同様にXmlParser#addParserを呼んで上記で作成したVisitorクラスを追加
 
