@@ -22,6 +22,10 @@ public class WidgetCountVisitor implements NodeVisitor {
 
     @Override
     public void visit( Node xmlNode) {
+        // コメントは無視
+        if ( xmlNode.getNodeType() == Node.COMMENT_NODE) {
+            return;
+        }
         String nodeNameWithNameSpace = xmlNode.getNodeName();
         String nodeName = removeNameSpace( nodeNameWithNameSpace);
 
@@ -56,5 +60,9 @@ public class WidgetCountVisitor implements NodeVisitor {
             Long count = entry.getValue();
             System.out.println( nodeName + " " + count);
         }
+    }
+
+    public Map<String, Long> getCountMap() {
+        return countMap;
     }
 }
