@@ -19,14 +19,14 @@ import jp.gr.java_conf.tsyki.parser.XmlParser;
  * @author TOSHIYUKI.IMAIZUMI
  * @since 2017/09/13
  */
-public class WidgetCountVisitorTest {
+public class TagNameCountVisitorTest {
     @Test
     public void test() throws IOException {
         XmlParser parser = new XmlParser();
         // 部品の出現数カウント
-        WidgetCountVisitor visitor = new WidgetCountVisitor();
+        TagNameCountVisitor visitor = new TagNameCountVisitor();
         parser.addVisitor( visitor);
-        parser.parse( getPath( "WidgetCountVisitorTest.xml"));
+        parser.parse( getPath( "TagNameCountVisitorTest.xml"));
         Map<String, Long> actualMap = visitor.getCountMap();
         Map<String, Long> expectedMap = new HashMap<>();
         expectedMap.put( "UiBinder", 1L);
